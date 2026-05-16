@@ -1,0 +1,76 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import RevealText from '~/components/RevealText.astro';
+import Reveal from '~/components/Reveal.astro';
+import MagneticLink from '~/components/MagneticLink.astro';
+---
+<BaseLayout title="404 · Lost" description="This page doesn't exist." noindex>
+  <section class="four">
+    <Reveal>
+      <p class="overline">Error 404 · page not found</p>
+    </Reveal>
+    <RevealText as="h1" text="Lost." class="four-title" stagger={80} delay={150} />
+    <Reveal class="four-body" delay={400}>
+      <hr class="accent-rule" />
+      <p>
+        The page you tried to reach does not exist. Maybe it was renamed; maybe it was
+        deleted; maybe it never existed. Either way — backtrack, or wander somewhere new.
+      </p>
+      <div class="four-actions">
+        <MagneticLink href="/" class="cta-link">Home</MagneticLink>
+        <MagneticLink href="/notes" class="cta-link">Notes</MagneticLink>
+        <MagneticLink href="/projects" class="cta-link">Projects</MagneticLink>
+        <MagneticLink href="/blog" class="cta-link">Writing</MagneticLink>
+      </div>
+    </Reveal>
+  </section>
+</BaseLayout>
+
+<style>
+  .four {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: clamp(5rem, 15vh, 10rem) 1.5rem 8rem;
+  }
+  .overline {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+  .four-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-variation-settings: "opsz" 144, "SOFT" 80;
+    font-size: clamp(5rem, 18vw, 14rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    margin: 0;
+  }
+  .accent-rule {
+    width: 4rem;
+    border: none;
+    border-top: 2px solid var(--accent);
+    margin: 2.5rem 0 1.5rem;
+  }
+  .four-body p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 48ch;
+    margin-bottom: 2.5rem;
+  }
+  .four-actions { display: flex; flex-wrap: wrap; gap: 1.25rem 2rem; }
+  .cta-link {
+    font-family: var(--font-display);
+    color: var(--ink);
+    border-bottom: 1px solid var(--divider);
+    padding-bottom: 0.2rem;
+    transition: color 250ms, border-color 250ms;
+  }
+  .cta-link:hover { color: var(--accent); border-color: var(--accent); }
+</style>

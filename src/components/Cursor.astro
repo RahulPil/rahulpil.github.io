@@ -1,0 +1,63 @@
+---
+// Custom cursor: a dot that follows precisely + a ring that lags & expands on hover targets.
+---
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<script>
+  function initCursor() {
+    if (window.matchMedia('(hover: none)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const dot = document.querySelector<HTMLElement>('.cursor-dot');
+    const ring = document.querySelector<HTMLElement>('.cursor-ring');
+    if (!dot || !ring) return;
+
+    document.documentElement.classList.add('has-cursor');
+
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight / 2;
+    let rx = x;
+    let ry = y;
+
+    const onMove = (e: MouseEvent) => {
+      x = e.clientX;
+      y = e.clientY;
+      dot.style.transform = `translate3d(${x - 3}px, ${y - 3}px, 0)`;
+    };
+
+    const onLeave = () => document.documentElement.classList.add('cursor-hidden');
+    const onEnter = () => document.documentElement.classList.remove('cursor-hidden');
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    document.addEventListener('mouseleave', onLeave);
+    document.addEventListener('mouseenter', onEnter);
+
+    // Hover interactions
+    const setHover = (on: boolean) =>
+      document.documentElement.classList.toggle('cursor-hover', on);
+    const selector = 'a, button, [role="button"], [data-cursor], input[type="submit"], label, summary';
+    const onOver = (e: Event) => {
+      if ((e.target as HTMLElement).closest?.(selector)) setHover(true);
+    };
+    const onOut = (e: Event) => {
+      if ((e.target as HTMLElement).closest?.(selector)) setHover(false);
+    };
+    document.addEventListener('mouseover', onOver);
+    document.addEventListener('mouseout', onOut);
+
+    // Animate ring with easing (lerp)
+    const tick = () => {
+      rx += (x - rx) * 0.18;
+      ry += (y - ry) * 0.18;
+      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+      requestAnimationFrame(tick);
+    };
+    tick();
+  }
+
+  initCursor();
+  document.addEventListener('astro:after-swap', () => {
+    // Re-bind events that were attached to documentElement remain. No-op for now.
+  });
+</script>

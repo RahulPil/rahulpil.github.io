@@ -1,0 +1,36 @@
+{
+  "name": "rahulpil-github-io",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "latest",
+    "@astrojs/mdx": "latest",
+    "@astrojs/sitemap": "latest",
+    "@astrojs/rss": "latest",
+    "tailwindcss": "latest",
+    "@tailwindcss/vite": "latest",
+    "@fontsource-variable/fraunces": "latest",
+    "@fontsource-variable/inter": "latest",
+    "@fontsource-variable/jetbrains-mono": "latest",
+    "remark-math": "latest",
+    "rehype-katex": "latest",
+    "katex": "latest",
+    "motion": "latest",
+    "reading-time": "latest"
+  },
+  "devDependencies": {
+    "@astrojs/check": "latest",
+    "typescript": "latest"
+  },
+  "overrides": {
+    "vite": "^7"
+  }
+}

@@ -1,0 +1,129 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import PageHeader from '~/components/PageHeader.astro';
+import Reveal from '~/components/Reveal.astro';
+import { getCollection } from 'astro:content';
+import { byDateDesc, isoMonth } from '~/lib/format';
+
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(byDateDesc);
+
+const byTopic = notes.reduce<Record<string, typeof notes>>((acc, n) => {
+  (acc[n.data.topic] ||= []).push(n);
+  return acc;
+}, {});
+
+const topics = Object.keys(byTopic).sort((a, b) => a.localeCompare(b));
+---
+<BaseLayout title="Notes" description="Notes on machine learning, organized by topic.">
+  <PageHeader
+    eyebrow="Index · notes"
+    title="Notes."
+    intro="A slow notebook on machine learning. Half-derivations, intuition pumps, reading summaries — written for me six months from now."
+    count={notes.length}
+    countLabel={notes.length === 1 ? 'note' : 'notes'}
+  />
+
+  <section class="notes">
+    {topics.map((topic, ti) => (
+      <Reveal class="topic-block" delay={ti * 80}>
+        <header class="topic-head">
+          <h2 class="topic-title">{topic}</h2>
+          <span class="topic-count font-mono">{byTopic[topic].length.toString().padStart(2, '0')}</span>
+        </header>
+        <ul class="note-list">
+          {byTopic[topic].map((n, i) => (
+            <Reveal as="li" delay={ti * 80 + i * 50}>
+              <a href={`/notes/${n.id}`} class="note-row" data-cursor>
+                <span class="note-date font-mono">{isoMonth(n.data.date)}</span>
+                <span class="note-content">
+                  <span class="note-title">{n.data.title}</span>
+                  {n.data.summary && <span class="note-summary">{n.data.summary}</span>}
+                </span>
+                <span class="note-arrow" aria-hidden="true">→</span>
+              </a>
+            </Reveal>
+          ))}
+        </ul>
+      </Reveal>
+    ))}
+    {notes.length === 0 && (
+      <p class="empty">No notes yet. Drop an MDX file in <code>src/content/notes</code>.</p>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .notes {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+  }
+  @media (min-width: 640px) { .notes { padding-left: 2.5rem; padding-right: 2.5rem; } }
+
+  .topic-block { margin-bottom: 4rem; }
+
+  .topic-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--ink);
+    margin-bottom: 0.5rem;
+  }
+  .topic-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-variation-settings: "opsz" 80, "SOFT" 30;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .topic-count {
+    font-size: 0.75rem;
+    color: var(--faint);
+    letter-spacing: 0.15em;
+  }
+
+  .note-list { list-style: none; padding: 0; margin: 0; }
+  .note-row {
+    display: grid;
+    grid-template-columns: 5rem 1fr auto;
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 1.25rem 0.25rem;
+    border-bottom: 1px solid var(--divider);
+    transition: padding-left 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .note-row:hover { padding-left: 1rem; }
+  .note-date {
+    font-size: 0.75rem;
+    color: var(--faint);
+    align-self: start;
+    padding-top: 0.35rem;
+  }
+  .note-content { display: flex; flex-direction: column; gap: 0.25rem; }
+  .note-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    color: var(--ink);
+    font-variation-settings: "opsz" 36;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .note-summary { font-size: 0.9rem; color: var(--muted); line-height: 1.5; max-width: 56ch; }
+  .note-arrow { color: var(--faint); transition: color 300ms, transform 300ms; }
+  .note-row:hover .note-arrow { color: var(--accent); transform: translateX(3px); }
+
+  @media (max-width: 700px) {
+    .note-row {
+      grid-template-columns: 5rem 1fr;
+      grid-template-rows: auto auto;
+    }
+    .note-arrow { grid-row: 1; grid-column: 2; justify-self: end; }
+  }
+
+  .empty { color: var(--muted); font-style: italic; }
+</style>

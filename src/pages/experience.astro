@@ -1,0 +1,259 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import PageHeader from '~/components/PageHeader.astro';
+import Reveal from '~/components/Reveal.astro';
+import SocialLinks from '~/components/SocialLinks.astro';
+import MagneticLink from '~/components/MagneticLink.astro';
+import { SITE } from '~/config/site';
+
+const education = [
+  {
+    school: 'Texas A&M University',
+    degree: 'B.S., Computer Science (in progress)',
+    dates: '2023 — present',
+    notes: 'Coursework in deep learning, optimization, statistics, and computer architecture.',
+  },
+];
+
+const research = [
+  {
+    title: 'Undergraduate Researcher',
+    org: 'TAMU, Department of Computer Science',
+    dates: '2024 — present',
+    bullets: [
+      'Reading + replication of recent results in transformer interpretability.',
+      'Side projects in optimization theory and scaling-law fitting.',
+    ],
+  },
+];
+
+const work = [
+  {
+    title: 'Software Engineering Intern',
+    org: '— (placeholder, swap with your real role)',
+    dates: 'Summer 2025',
+    bullets: [
+      'Built and shipped a feature used by N teams.',
+      'Wrote a thing, learned a thing.',
+    ],
+  },
+];
+
+const awards = [
+  { title: 'Dean\'s List', org: 'Texas A&M', dates: '2023 — present' },
+  { title: 'Placeholder award', org: 'Some venue', dates: '2024' },
+];
+
+const talks: { title: string; venue: string; dates: string; link?: string }[] = [
+  // { title: 'A short talk on something', venue: 'Some seminar', dates: '2026', link: '#' },
+];
+---
+<BaseLayout title="About / Experience" description="Education, research, work, awards, and talks.">
+  <PageHeader
+    eyebrow="About"
+    title="Experience."
+    intro="Where I've been, what I've done, what I'm doing next. This page lives as honest a record of the work as I can manage."
+  />
+
+  <section class="cv">
+    <Reveal class="cv-intro" delay={100}>
+      <p class="cv-bio">
+        I'm Rahul — a computer science student at Texas A&amp;M, focused on machine learning.
+        I care most about the parts of the field where the engineering and the theory meet
+        uncomfortably: optimization, generalization, scaling, and the strange behavior of
+        large models we don't yet have language for.
+      </p>
+      <div class="cv-actions">
+        <MagneticLink href="/cv.pdf" class="cta-link">Download CV (PDF) ↓</MagneticLink>
+        <span class="dot">·</span>
+        <MagneticLink href={`mailto:${SITE.email}`} class="cta-link">Email me ↗</MagneticLink>
+      </div>
+    </Reveal>
+
+    <div class="cv-grid">
+      <Reveal class="cv-section">
+        <h2 class="cv-section-title">Education</h2>
+        <ul class="cv-list">
+          {education.map((e) => (
+            <li class="cv-item">
+              <div class="cv-item-head">
+                <span class="cv-item-title">{e.school}</span>
+                <span class="cv-item-date font-mono">{e.dates}</span>
+              </div>
+              <p class="cv-item-org">{e.degree}</p>
+              {e.notes && <p class="cv-item-notes">{e.notes}</p>}
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+
+      <Reveal class="cv-section" delay={100}>
+        <h2 class="cv-section-title">Research</h2>
+        <ul class="cv-list">
+          {research.map((r) => (
+            <li class="cv-item">
+              <div class="cv-item-head">
+                <span class="cv-item-title">{r.title}</span>
+                <span class="cv-item-date font-mono">{r.dates}</span>
+              </div>
+              <p class="cv-item-org">{r.org}</p>
+              <ul class="cv-bullets">
+                {r.bullets.map((b) => <li>{b}</li>)}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+
+      <Reveal class="cv-section" delay={150}>
+        <h2 class="cv-section-title">Work</h2>
+        <ul class="cv-list">
+          {work.map((w) => (
+            <li class="cv-item">
+              <div class="cv-item-head">
+                <span class="cv-item-title">{w.title}</span>
+                <span class="cv-item-date font-mono">{w.dates}</span>
+              </div>
+              <p class="cv-item-org">{w.org}</p>
+              <ul class="cv-bullets">
+                {w.bullets.map((b) => <li>{b}</li>)}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+
+      <Reveal class="cv-section" delay={200}>
+        <h2 class="cv-section-title">Awards</h2>
+        <ul class="cv-list cv-list--compact">
+          {awards.map((a) => (
+            <li class="cv-item">
+              <div class="cv-item-head">
+                <span class="cv-item-title">{a.title}</span>
+                <span class="cv-item-date font-mono">{a.dates}</span>
+              </div>
+              <p class="cv-item-org">{a.org}</p>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+
+      {talks.length > 0 && (
+        <Reveal class="cv-section" delay={250}>
+          <h2 class="cv-section-title">Talks</h2>
+          <ul class="cv-list cv-list--compact">
+            {talks.map((t) => (
+              <li class="cv-item">
+                <div class="cv-item-head">
+                  <span class="cv-item-title">
+                    {t.link ? <a href={t.link} class="link-underline">{t.title}</a> : t.title}
+                  </span>
+                  <span class="cv-item-date font-mono">{t.dates}</span>
+                </div>
+                <p class="cv-item-org">{t.venue}</p>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+      )}
+
+      <Reveal class="cv-section" delay={300}>
+        <h2 class="cv-section-title">Elsewhere</h2>
+        <SocialLinks class="mt-2" />
+      </Reveal>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cv {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+  }
+  @media (min-width: 640px) { .cv { padding-left: 2.5rem; padding-right: 2.5rem; } }
+
+  .cv-intro {
+    max-width: 64ch;
+    margin-bottom: 4rem;
+  }
+  .cv-bio {
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 2rem;
+  }
+  .cv-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+  .cv-actions .dot { color: var(--faint); }
+  .cta-link {
+    font-family: var(--font-display);
+    color: var(--ink);
+    border-bottom: 1px solid var(--divider);
+    padding-bottom: 0.2rem;
+    transition: color 250ms, border-color 250ms;
+  }
+  .cta-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  .cv-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+  }
+
+  .cv-section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.5vw, 1.75rem);
+    font-variation-settings: "opsz" 60, "SOFT" 30;
+    line-height: 1.1;
+    color: var(--ink);
+    margin: 0 0 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .cv-list { list-style: none; padding: 0; margin: 0; }
+  .cv-list--compact .cv-item { padding: 0.875rem 0; }
+  .cv-item {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--divider);
+  }
+  .cv-item:last-child { border-bottom: none; }
+  .cv-item-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.25rem;
+  }
+  .cv-item-title {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-variation-settings: "opsz" 24;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .cv-item-date { font-size: 0.75rem; color: var(--faint); }
+  .cv-item-org { color: var(--muted); font-size: 0.95rem; margin: 0 0 0.5rem; }
+  .cv-item-notes { color: var(--muted); font-size: 0.9rem; margin: 0.5rem 0 0; line-height: 1.6; }
+  .cv-bullets { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+  .cv-bullets li {
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    position: relative;
+  }
+  .cv-bullets li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+</style>

@@ -1,0 +1,119 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { SITE } from '~/config/site';
+import Header from '~/components/Header.astro';
+import Footer from '~/components/Footer.astro';
+import Cursor from '~/components/Cursor.astro';
+import '~/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  ogImage = '/og.png',
+  noindex = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).toString();
+const ogUrl = new URL(ogImage, Astro.site ?? SITE.url).toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+    <link rel="alternate" type="application/rss+xml" title={`Blog · ${SITE.name}`} href="/blog/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem('theme');
+          const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          const theme = stored || sys;
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+        } catch (e) { /* ignore */ }
+      })();
+    </script>
+    <ClientRouter />
+  </head>
+  <body>
+    <Cursor />
+    <Header />
+    <main id="main" class="min-h-[60vh]">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      function initReveal() {
+        const els = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-in), .reveal-text:not(.is-in)');
+        if (!('IntersectionObserver' in window)) {
+          els.forEach((el) => el.classList.add('is-in'));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+        );
+        els.forEach((el) => io.observe(el));
+      }
+
+      function initMagnetic() {
+        const els = document.querySelectorAll<HTMLElement>('[data-magnetic]');
+        els.forEach((el) => {
+          if ((el as any).__magBound) return;
+          (el as any).__magBound = true;
+          const strength = parseFloat(el.dataset.strength || '0.3');
+          const onMove = (e: MouseEvent) => {
+            const r = el.getBoundingClientRect();
+            const x = (e.clientX - (r.left + r.width / 2)) * strength;
+            const y = (e.clientY - (r.top + r.height / 2)) * strength;
+            el.style.transform = `translate(${x}px, ${y}px)`;
+          };
+          const onLeave = () => {
+            el.style.transform = '';
+          };
+          el.addEventListener('mousemove', onMove);
+          el.addEventListener('mouseleave', onLeave);
+        });
+      }
+
+      function init() {
+        initReveal();
+        initMagnetic();
+      }
+      init();
+      document.addEventListener('astro:after-swap', init);
+    </script>
+  </body>
+</html>

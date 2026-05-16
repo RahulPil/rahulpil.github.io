@@ -1,0 +1,30 @@
+---
+import { SITE } from '~/config/site';
+
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+const items = [
+  SITE.social.github && { href: SITE.social.github, label: 'GitHub' },
+  SITE.social.scholar && { href: SITE.social.scholar, label: 'Scholar' },
+  SITE.social.linkedin && { href: SITE.social.linkedin, label: 'LinkedIn' },
+  SITE.email && { href: `mailto:${SITE.email}`, label: 'Email' },
+].filter(Boolean) as { href: string; label: string }[];
+---
+<ul class={`flex flex-wrap gap-x-5 gap-y-2 text-sm ${className}`}>
+  {items.map((item) => (
+    <li>
+      <a
+        href={item.href}
+        class="link-underline"
+        data-cursor
+        target={item.href.startsWith('http') ? '_blank' : undefined}
+        rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+      >
+        {item.label}
+        <span aria-hidden="true" style="display:inline-block; margin-left: 0.25em; transform: translateY(-0.05em);">↗</span>
+      </a>
+    </li>
+  ))}
+</ul>

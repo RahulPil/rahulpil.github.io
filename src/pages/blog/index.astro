@@ -1,0 +1,106 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import PageHeader from '~/components/PageHeader.astro';
+import Reveal from '~/components/Reveal.astro';
+import { getCollection } from 'astro:content';
+import { byDateDesc, formatDate } from '~/lib/format';
+import readingTime from 'reading-time';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(byDateDesc);
+---
+<BaseLayout title="Writing" description="Essays and longer-form posts.">
+  <PageHeader
+    eyebrow="Index · writing"
+    title="Writing."
+    intro="Longer-form essays. Reading notes, opinions, occasional retrospectives — published before they're finished."
+    count={posts.length}
+    countLabel={posts.length === 1 ? 'post' : 'posts'}
+  />
+
+  <section class="writing">
+    <ul class="post-list">
+      {posts.map((p, i) => {
+        const mins = Math.max(1, Math.round(readingTime(p.body || '').minutes));
+        return (
+          <Reveal as="li" delay={i * 70}>
+            <a href={`/blog/${p.id}`} class="post-row" data-cursor>
+              <span class="post-date font-mono">{formatDate(p.data.date, { short: true })}</span>
+              <span class="post-content">
+                <h2 class="post-title">{p.data.title}</h2>
+                <p class="post-summary">{p.data.summary}</p>
+                <span class="post-meta">
+                  <span class="font-mono">{mins} min read</span>
+                  {p.data.tags.length > 0 && <span class="dot">·</span>}
+                  {p.data.tags.length > 0 && (
+                    <span class="font-mono lower">{p.data.tags.join(' · ')}</span>
+                  )}
+                </span>
+              </span>
+              <span class="post-arrow" aria-hidden="true">↗</span>
+            </a>
+          </Reveal>
+        );
+      })}
+    </ul>
+    {posts.length === 0 && (
+      <p class="empty">No posts yet. Drop an MDX file in <code>src/content/blog</code>.</p>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .writing {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+  }
+  @media (min-width: 640px) { .writing { padding-left: 2.5rem; padding-right: 2.5rem; } }
+
+  .post-list { list-style: none; padding: 0; margin: 0; }
+
+  .post-row {
+    display: grid;
+    grid-template-columns: 7rem 1fr auto;
+    gap: 2rem;
+    padding: 2rem 0.25rem;
+    border-bottom: 1px solid var(--divider);
+    transition: padding-left 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .post-row:hover { padding-left: 1rem; }
+  .post-date { font-size: 0.8rem; color: var(--faint); padding-top: 0.5rem; }
+
+  .post-content { display: flex; flex-direction: column; gap: 0.5rem; }
+  .post-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .post-summary { color: var(--muted); line-height: 1.55; max-width: 60ch; }
+  .post-meta { display: flex; gap: 0.6rem; align-items: center; font-size: 0.75rem; color: var(--faint); }
+  .post-meta .dot { color: var(--faint); }
+  .post-meta .lower { text-transform: lowercase; }
+
+  .post-arrow {
+    color: var(--faint);
+    font-size: 1.25rem;
+    padding-top: 0.25rem;
+    transition: color 300ms, transform 300ms;
+  }
+  .post-row:hover .post-arrow { color: var(--accent); transform: translate(3px, -3px); }
+
+  @media (max-width: 700px) {
+    .post-row {
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+    }
+    .post-date { grid-row: 1; grid-column: 1; padding-top: 0; }
+    .post-content { grid-row: 2; grid-column: 1 / -1; }
+    .post-arrow { grid-row: 1; grid-column: 2; padding-top: 0; }
+  }
+
+  .empty { color: var(--muted); font-style: italic; }
+</style>

@@ -1,0 +1,76 @@
+---
+import RevealText from '~/components/RevealText.astro';
+import Reveal from '~/components/Reveal.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+  count?: number;
+  countLabel?: string;
+}
+const { eyebrow, title, intro, count, countLabel } = Astro.props;
+---
+<section class="page-header">
+  <Reveal>
+    <p class="overline">{eyebrow}</p>
+  </Reveal>
+  <RevealText as="h1" text={title} class="display-lg" stagger={50} delay={150} />
+  {intro && (
+    <Reveal class="page-intro" delay={500}>
+      <hr class="accent-rule" />
+      <p>{intro}</p>
+    </Reveal>
+  )}
+  {typeof count === 'number' && (
+    <Reveal class="page-count" delay={700}>
+      <span class="font-mono">{count} {countLabel || 'items'}</span>
+    </Reveal>
+  )}
+</section>
+
+<style>
+  .page-header {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: clamp(3rem, 8vh, 6rem) 1.5rem 2.5rem;
+  }
+  @media (min-width: 640px) { .page-header { padding-left: 2.5rem; padding-right: 2.5rem; } }
+  .overline {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .accent-rule {
+    width: 4rem;
+    border: none;
+    border-top: 2px solid var(--accent);
+    margin: 2rem 0 1.5rem;
+  }
+  .display-lg {
+    font-family: var(--font-display);
+    font-weight: 380;
+    font-variation-settings: "opsz" 144, "SOFT" 60;
+    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .page-intro p {
+    font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 52ch;
+  }
+  .page-count {
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: var(--faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+</style>

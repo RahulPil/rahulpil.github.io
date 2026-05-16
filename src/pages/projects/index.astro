@@ -1,0 +1,142 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import PageHeader from '~/components/PageHeader.astro';
+import Reveal from '~/components/Reveal.astro';
+import { getCollection } from 'astro:content';
+import { byDateDesc, formatDate } from '~/lib/format';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort(byDateDesc);
+---
+<BaseLayout title="Projects" description="A selection of machine learning projects.">
+  <PageHeader
+    eyebrow="Index · projects"
+    title="Projects."
+    intro="Things I built to make sure I understood. Some are research artifacts, some are just curiosity made permanent. None are finished."
+    count={projects.length}
+    countLabel={projects.length === 1 ? 'project' : 'projects'}
+  />
+
+  <section class="projects">
+    <ul class="project-grid">
+      {projects.map((p, i) => (
+        <Reveal as="li" delay={i * 60}>
+          <a href={`/projects/${p.id}`} class="project-card" data-cursor>
+            <div class="project-card-inner">
+              <header class="project-head">
+                <span class="font-mono text-[0.7rem] uppercase tracking-widest" style="color: var(--faint);">
+                  {p.data.featured ? '★ featured · ' : ''}{formatDate(p.data.date, { short: true })}
+                </span>
+                <h2 class="project-title">{p.data.title}</h2>
+              </header>
+              <p class="project-summary">{p.data.summary}</p>
+              <footer class="project-foot">
+                <ul class="tag-row">
+                  {p.data.stack.map((t) => <li>{t}</li>)}
+                </ul>
+                <span class="project-arrow" aria-hidden="true">↗</span>
+              </footer>
+            </div>
+          </a>
+        </Reveal>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .projects {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+  }
+  @media (min-width: 640px) { .projects { padding-left: 2.5rem; padding-right: 2.5rem; } }
+
+  .project-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 800px) { .project-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; } }
+
+  .project-card {
+    display: block;
+    position: relative;
+    border: 1px solid var(--divider);
+    background: var(--bg-elevated);
+    padding: 2rem 1.75rem;
+    overflow: hidden;
+    transition: border-color 400ms, transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    min-height: 18rem;
+    height: 100%;
+  }
+  .project-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-soft) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 500ms;
+    pointer-events: none;
+  }
+  .project-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+  .project-card:hover::before { opacity: 1; }
+
+  .project-card-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 1.5rem;
+    position: relative;
+  }
+  .project-head { display: flex; flex-direction: column; gap: 0.5rem; }
+  .project-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0;
+  }
+  .project-summary {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    flex-grow: 1;
+  }
+  .project-foot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .tag-row {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
+  }
+  .tag-row li {
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--divider);
+    border-radius: 999px;
+    color: var(--muted);
+  }
+  .project-arrow {
+    color: var(--faint);
+    font-size: 1.25rem;
+    transition: color 300ms, transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .project-card:hover .project-arrow { color: var(--accent); transform: translate(3px, -3px); }
+</style>

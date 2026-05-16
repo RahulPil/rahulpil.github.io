@@ -1,0 +1,389 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import RevealText from '~/components/RevealText.astro';
+import Reveal from '~/components/Reveal.astro';
+import MagneticLink from '~/components/MagneticLink.astro';
+import SocialLinks from '~/components/SocialLinks.astro';
+import { SITE } from '~/config/site';
+import { getCollection } from 'astro:content';
+import { isoMonth } from '~/lib/format';
+
+const notes = await getCollection('notes', ({ data }) => !data.draft);
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+const blog = await getCollection('blog', ({ data }) => !data.draft);
+
+type Item = { href: string; title: string; kind: string; date: Date };
+const allItems: Item[] = [
+  ...notes.map((n) => ({ href: `/notes/${n.id}`, title: n.data.title, kind: 'Notes', date: n.data.date })),
+  ...projects.map((p) => ({ href: `/projects/${p.id}`, title: p.data.title, kind: 'Project', date: p.data.date })),
+  ...blog.map((b) => ({ href: `/blog/${b.id}`, title: b.data.title, kind: 'Writing', date: b.data.date })),
+]
+  .sort((a, b) => b.date.getTime() - a.date.getTime())
+  .slice(0, 6);
+---
+<BaseLayout>
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <p class="overline"><span aria-hidden="true">01 / </span>portfolio</p>
+        <h1 class="display-xl">
+          <RevealText text="Machine" stagger={70} />
+          <br />
+          <RevealText text="learning," stagger={70} delay={140} />
+          <br />
+          <em class="ital"><RevealText text="carefully." stagger={70} delay={280} /></em>
+        </h1>
+        <Reveal class="hero-sub" delay={900}>
+          <hr class="accent-rule" />
+          <p class="lead text-pretty">
+            Notes, projects, and writing from a student of machine learning at
+            <span style="color: var(--ink);">Texas A&amp;M</span>. Always curious,
+            occasionally rigorous.
+          </p>
+          <SocialLinks class="mt-6" />
+        </Reveal>
+      </div>
+      <div class="hero-right">
+        <Reveal delay={500}>
+          <figure class="photo">
+            <img src="/photo-placeholder.svg" alt={SITE.name} width="288" height="384" loading="eager" />
+            <figcaption class="font-mono text-[0.65rem] uppercase tracking-widest mt-3" style="color: var(--faint);">
+              fig. 01 · the author
+            </figcaption>
+          </figure>
+        </Reveal>
+      </div>
+    </div>
+    <Reveal class="hero-scroll" delay={1400}>
+      <a href="#recently" class="scroll-cue" data-cursor aria-label="Scroll to recent work">
+        <span class="font-mono text-[0.7rem] uppercase tracking-[0.25em]">scroll</span>
+        <span class="scroll-line"></span>
+      </a>
+    </Reveal>
+  </section>
+
+  <section id="recently" class="section">
+    <Reveal class="section-header">
+      <p class="overline"><span aria-hidden="true">02 / </span>recent</p>
+      <h2 class="display-md">Lately.</h2>
+    </Reveal>
+
+    {allItems.length === 0 ? (
+      <Reveal>
+        <p class="text-pretty" style="color: var(--muted);">
+          Nothing here yet — drop a note in <code>src/content/notes</code>, a project in <code>src/content/projects</code>, or a post in <code>src/content/blog</code>.
+        </p>
+      </Reveal>
+    ) : (
+      <ul class="recent-list">
+        {allItems.map((item, i) => (
+          <Reveal as="li" delay={i * 70}>
+            <a href={item.href} class="recent-row group" data-cursor>
+              <span class="recent-num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="recent-title">{item.title}</span>
+              <span class="recent-meta">
+                <span class="recent-kind">{item.kind}</span>
+                <span class="dot">·</span>
+                <span class="font-mono">{isoMonth(item.date)}</span>
+              </span>
+              <span class="recent-arrow" aria-hidden="true">↗</span>
+            </a>
+          </Reveal>
+        ))}
+      </ul>
+    )}
+
+    <Reveal class="recent-cta" delay={300}>
+      <MagneticLink href="/notes" class="cta-link">All notes</MagneticLink>
+      <MagneticLink href="/projects" class="cta-link">All projects</MagneticLink>
+      <MagneticLink href="/blog" class="cta-link">All writing</MagneticLink>
+    </Reveal>
+  </section>
+
+  <section class="section about-snip">
+    <Reveal class="section-header">
+      <p class="overline"><span aria-hidden="true">03 / </span>about</p>
+      <h2 class="display-md">Brief<span style="color: var(--accent);">.</span></h2>
+    </Reveal>
+    <div class="about-grid">
+      <Reveal class="about-body" delay={120}>
+        <p>
+          I study machine learning at Texas A&amp;M, with a soft spot for the parts where the
+          math is honest about its limits — generalization, optimization, and the strange
+          behaviors of large models we don't yet have words for.
+        </p>
+        <p>
+          This site is a slow, deliberate notebook: clean derivations where I can manage them,
+          rough sketches where I can't, and the occasional essay when something is interesting
+          enough to write down twice.
+        </p>
+        <MagneticLink href="/experience" class="cta-link mt-4 inline-block">Full background →</MagneticLink>
+      </Reveal>
+      <Reveal class="about-aside" delay={240}>
+        <dl class="meta-list">
+          <div><dt>Location</dt><dd>College Station, TX</dd></div>
+          <div><dt>Currently</dt><dd>Studying deep learning theory</dd></div>
+          <div><dt>Reading</dt><dd>Sutton &amp; Barto, again</dd></div>
+          <div><dt>Listening</dt><dd>mostly piano</dd></div>
+        </dl>
+      </Reveal>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    position: relative;
+    padding: clamp(3rem, 10vh, 7rem) 1.5rem clamp(4rem, 12vh, 8rem);
+    max-width: 78rem;
+    margin: 0 auto;
+  }
+  @media (min-width: 640px) { .hero { padding-left: 2.5rem; padding-right: 2.5rem; } }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: end;
+  }
+  @media (min-width: 900px) {
+    .hero-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 5rem; }
+  }
+
+  .overline {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+
+  .display-xl {
+    font-family: var(--font-display);
+    font-weight: 350;
+    font-variation-settings: "opsz" 144, "SOFT" 60;
+    font-size: clamp(3rem, 11vw, 9rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .display-xl .ital {
+    font-style: italic;
+    color: var(--accent);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+
+  .display-md {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-variation-settings: "opsz" 100, "SOFT" 40;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .accent-rule {
+    width: 4rem;
+    border: none;
+    border-top: 2px solid var(--accent);
+    margin: 2rem 0 1.5rem;
+  }
+  .lead {
+    font-size: clamp(1rem, 1.4vw, 1.125rem);
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: 38ch;
+  }
+
+  .hero-right { display: flex; justify-content: flex-end; }
+  .photo {
+    margin: 0;
+    width: clamp(11rem, 26vw, 18rem);
+  }
+  .photo img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    background: var(--bg-elevated);
+    border: 1px solid var(--divider);
+  }
+
+  .hero-scroll { margin-top: 5rem; display: flex; }
+  .scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--muted);
+    transition: color 300ms;
+  }
+  .scroll-cue:hover { color: var(--accent); }
+  .scroll-line {
+    width: 4rem;
+    height: 1px;
+    background: currentColor;
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: -30%;
+    width: 30%;
+    height: 3px;
+    background: var(--accent);
+    animation: scroll-pulse 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  @keyframes scroll-pulse {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(450%); }
+  }
+
+  .section {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: clamp(4rem, 10vh, 7rem) 1.5rem;
+  }
+  @media (min-width: 640px) { .section { padding-left: 2.5rem; padding-right: 2.5rem; } }
+  .section-header { margin-bottom: 2.5rem; }
+
+  .recent-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--divider);
+  }
+  .recent-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: baseline;
+    gap: 1.25rem;
+    padding: 1.25rem 0.25rem;
+    border-bottom: 1px solid var(--divider);
+    position: relative;
+    transition: padding-left 500ms cubic-bezier(0.16, 1, 0.3, 1), color 300ms;
+  }
+  .recent-row:hover { padding-left: 1.25rem; }
+  .recent-row::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0.75rem;
+    height: 1px;
+    background: var(--accent);
+    transform: translate(-1rem, -50%) scaleX(0);
+    transform-origin: left;
+    transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .recent-row:hover::before { transform: translate(0.25rem, -50%) scaleX(1); }
+  .recent-num {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--faint);
+    align-self: center;
+    width: 1.75rem;
+  }
+  .recent-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    color: var(--ink);
+    font-variation-settings: "opsz" 36;
+    letter-spacing: -0.01em;
+  }
+  .recent-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .recent-kind {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .recent-meta .dot { color: var(--faint); }
+  .recent-arrow {
+    color: var(--faint);
+    transition: color 300ms, transform 300ms;
+  }
+  .recent-row:hover .recent-arrow { color: var(--accent); transform: translate(2px, -2px); }
+  @media (max-width: 700px) {
+    .recent-row {
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto;
+      column-gap: 0.75rem;
+      row-gap: 0.25rem;
+    }
+    .recent-meta { grid-column: 2 / 3; }
+    .recent-arrow { grid-row: 1 / 2; }
+  }
+
+  .recent-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.5rem;
+    margin-top: 3rem;
+  }
+  .cta-link {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--ink);
+    border-bottom: 1px solid var(--divider);
+    padding-bottom: 0.25rem;
+    transition: color 250ms, border-color 250ms;
+  }
+  .cta-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  .about-snip {}
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  @media (min-width: 900px) {
+    .about-grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 5rem; }
+  }
+  .about-body {
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    line-height: 1.7;
+    max-width: 48ch;
+    color: var(--text);
+  }
+  .about-body p + p { margin-top: 1.25rem; }
+  .about-aside { padding-top: 0.5rem; }
+
+  .meta-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 0;
+    border-top: 1px solid var(--divider);
+    padding-top: 1.5rem;
+  }
+  .meta-list > div {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: 0.5rem;
+    align-items: baseline;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--divider);
+  }
+  .meta-list dt {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--faint);
+  }
+  .meta-list dd {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+</style>

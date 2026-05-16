@@ -1,0 +1,35 @@
+---
+interface Props {
+  text: string;
+  as?: keyof HTMLElementTagNameMap;
+  class?: string;
+  delay?: number;
+  stagger?: number;
+}
+const {
+  text,
+  as: Tag = 'span',
+  class: className = '',
+  delay = 0,
+  stagger = 35,
+} = Astro.props;
+
+const tokens = text.split(/(\s+)/);
+let wordIndex = 0;
+---
+<Tag
+  class={`reveal-text ${className}`}
+  aria-label={text}
+  style={`--reveal-delay: ${delay}ms`}
+>
+  <span aria-hidden="true">
+    {tokens.map((token) => {
+      if (/^\s+$/.test(token)) return token;
+      const i = wordIndex++;
+      const lineSafe = token.replace(/-/g, '‑');
+      return (
+        <span class="word"><span style={`--i: ${i}; transition-delay: calc(${i} * ${stagger}ms + ${delay}ms);`}>{lineSafe}</span></span>
+      );
+    })}
+  </span>
+</Tag>

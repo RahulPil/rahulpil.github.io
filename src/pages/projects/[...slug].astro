@@ -1,0 +1,151 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Reveal from '~/components/Reveal.astro';
+import RevealText from '~/components/RevealText.astro';
+import { getCollection, render } from 'astro:content';
+import { formatDate } from '~/lib/format';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+<BaseLayout title={project.data.title} description={project.data.summary}>
+  <article class="project-article">
+    <header class="article-hero">
+      <Reveal>
+        <p class="overline">
+          <a href="/projects" class="link-underline">Projects</a> · {formatDate(project.data.date, { short: true })}
+        </p>
+      </Reveal>
+      <RevealText as="h1" text={project.data.title} class="display-lg" stagger={50} delay={150} />
+      <Reveal class="article-summary" delay={500}>
+        <hr class="accent-rule" />
+        <p>{project.data.summary}</p>
+      </Reveal>
+      <Reveal class="article-meta" delay={700}>
+        <dl>
+          {project.data.stack.length > 0 && (
+            <div>
+              <dt>Stack</dt>
+              <dd>{project.data.stack.join(' · ')}</dd>
+            </div>
+          )}
+          {project.data.tags.length > 0 && (
+            <div>
+              <dt>Tags</dt>
+              <dd>{project.data.tags.join(' · ')}</dd>
+            </div>
+          )}
+          {Object.keys(project.data.links).length > 0 && (
+            <div>
+              <dt>Links</dt>
+              <dd class="links">
+                {project.data.links.github && (
+                  <a href={project.data.links.github} class="link-underline" target="_blank" rel="noopener noreferrer" data-cursor>
+                    GitHub <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+                {project.data.links.demo && (
+                  <a href={project.data.links.demo} class="link-underline" target="_blank" rel="noopener noreferrer" data-cursor>
+                    Demo <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+                {project.data.links.paper && (
+                  <a href={project.data.links.paper} class="link-underline" target="_blank" rel="noopener noreferrer" data-cursor>
+                    Paper <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+              </dd>
+            </div>
+          )}
+        </dl>
+      </Reveal>
+    </header>
+
+    <Reveal class="article-body prose" delay={300}>
+      <Content />
+    </Reveal>
+
+    <Reveal class="article-foot" delay={200}>
+      <a href="/projects" class="back-link" data-cursor>← All projects</a>
+    </Reveal>
+  </article>
+</BaseLayout>
+
+<style>
+  .project-article {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: clamp(3rem, 8vh, 6rem) 1.5rem 6rem;
+  }
+  @media (min-width: 640px) { .project-article { padding-left: 2.5rem; padding-right: 2.5rem; } }
+
+  .article-hero { margin-bottom: 4rem; }
+  .overline {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .accent-rule {
+    width: 4rem;
+    border: none;
+    border-top: 2px solid var(--accent);
+    margin: 2rem 0 1.5rem;
+  }
+  .display-lg {
+    font-family: var(--font-display);
+    font-weight: 380;
+    font-variation-settings: "opsz" 144, "SOFT" 60;
+    font-size: clamp(2.5rem, 7vw, 4.75rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .article-summary p {
+    font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+    line-height: 1.6;
+    color: var(--text);
+    max-width: 60ch;
+  }
+  .article-meta {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--divider);
+  }
+  .article-meta dl {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 0;
+  }
+  @media (min-width: 700px) {
+    .article-meta dl { grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  }
+  .article-meta dt {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--faint);
+    margin-bottom: 0.5rem;
+  }
+  .article-meta dd { margin: 0; font-size: 0.95rem; color: var(--text); }
+  .article-meta .links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+
+  .article-body { margin: 0 auto; max-width: 68ch; }
+  .article-foot {
+    max-width: 68ch;
+    margin: 4rem auto 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--divider);
+  }
+  .back-link { font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); transition: color 250ms; }
+  .back-link:hover { color: var(--accent); }
+</style>

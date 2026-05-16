@@ -1,0 +1,12 @@
+<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F2EDE5"/>
+      <stop offset="100%" stop-color="#E8E1D6"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="400" fill="url(#g)"/>
+  <circle cx="150" cy="160" r="48" fill="#D9D2C5"/>
+  <path d="M 60 400 Q 60 280 150 280 Q 240 280 240 400 Z" fill="#D9D2C5"/>
+  <text x="150" y="375" font-family="ui-monospace, monospace" font-size="10" letter-spacing="0.1em" text-anchor="middle" fill="#A8A39A">PLACEHOLDER · SWAP ME</text>
+</svg>

@@ -1,0 +1,43 @@
+---
+title: "Reading: scaling laws, redux"
+summary: "Re-reading Chinchilla and Hoffmann et al. after a year of more data — what holds up, what didn't, and where I think the next break will be."
+date: 2026-04-04
+tags: ["reading", "scaling", "llms"]
+---
+
+A year ago the Chinchilla paper felt like a settled question. *Compute-optimal* training
+meant scaling parameters and tokens roughly in proportion; for a given compute budget $C$,
+the loss-minimizing model size was
+
+$$
+N^* \propto C^{0.5}, \qquad D^* \propto C^{0.5}.
+$$
+
+A year later, this looks more like a useful first-order approximation than a law. A few
+things have softened.
+
+## What still holds
+
+- **More tokens is rarely wasted.** Even at the "wrong" model size, training longer than
+  Chinchilla-optimal continues to reduce loss, just less efficiently per FLOP. The
+  practical implication — that for inference-constrained deployment you want a smaller
+  model trained longer — has aged well.
+- **The shape of the curves.** Power-law loss in $N$ and $D$, fit on a log-log plot, still
+  works remarkably well across two more orders of magnitude.
+
+## What didn't
+
+- **The exponents move with data quality.** Mixing in higher-quality data shifts the
+  effective scaling exponents in ways that the original paper, fit on a fixed mixture,
+  could not see. The "law" is more accurately a *law conditional on the data distribution*.
+- **Architecture matters more than was admitted.** Mixture-of-experts, sparse attention,
+  and a half-dozen other improvements have each broken the curves by a fraction of a
+  decimal point. Together, they make any single fit look outdated within a year.
+
+## What I'm watching for
+
+I think the next discontinuity is not in the loss curves but in *what the loss measures*.
+Cross-entropy on next-token prediction is increasingly a proxy for something we don't have
+a name for. The papers that will matter most over the next year are the ones that argue
+for new loss functions — preference, verification, planning — and report scaling laws in
+*those*.

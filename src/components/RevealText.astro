@@ -23,7 +23,7 @@ let wordIndex = 0;
   style={`--reveal-delay: ${delay}ms`}
 >
   <span aria-hidden="true">
-    {tokens.map((token) => {
+    {tokens.map((token: string) => {
       if (/^\s+$/.test(token)) return token;
       const i = wordIndex++;
       const lineSafe = token.replace(/-/g, '‑');

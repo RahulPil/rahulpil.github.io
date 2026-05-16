@@ -10,7 +10,6 @@ export const SITE = {
   social: {
     github: 'https://github.com/rahulpil',
     linkedin: 'https://www.linkedin.com/in/rahul-pillalamarri',
-    scholar: 'https://scholar.google.com',
     twitter: '',
   },
   nav: [

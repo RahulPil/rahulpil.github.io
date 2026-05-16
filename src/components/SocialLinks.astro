@@ -7,7 +7,6 @@ interface Props {
 const { class: className = '' } = Astro.props;
 const items = [
   SITE.social.github && { href: SITE.social.github, label: 'GitHub' },
-  SITE.social.scholar && { href: SITE.social.scholar, label: 'Scholar' },
   SITE.social.linkedin && { href: SITE.social.linkedin, label: 'LinkedIn' },
   SITE.email && { href: `mailto:${SITE.email}`, label: 'Email' },
 ].filter(Boolean) as { href: string; label: string }[];

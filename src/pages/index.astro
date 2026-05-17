@@ -192,6 +192,15 @@ const allItems: Item[] = [
     object-fit: cover;
     background: var(--bg-elevated);
     border: 1px solid var(--divider);
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.10),
+      0 16px 40px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 400ms ease, transform 400ms ease;
+  }
+  :global(:root.dark) .photo img {
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.45),
+      0 16px 40px rgba(0, 0, 0, 0.55);
   }
 
   .section {

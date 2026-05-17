@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro"
+    "astro": "astro",
+    "new-post": "node scripts/new-post.mjs"
   },
   "dependencies": {
     "astro": "latest",

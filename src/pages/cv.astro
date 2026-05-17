@@ -1,0 +1,67 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Reveal from '~/components/Reveal.astro';
+---
+<BaseLayout title="CV" description="My CV.">
+  <section class="cv">
+    <Reveal delay={100}>
+      <hr class="accent-rule" />
+      <p class="intro text-pretty">
+        I'm a master's student in computer science at Texas A&amp;M, in the Deep Learning
+        Fundamentals Lab under Dr. Tomer Galanti. I'm also a software engineer at Boeing
+        on the MQ-25 program. Before grad school I studied at the University of Washington.
+        You can download my résumé <a href="/RahulPillalamarri_Resume.pdf" download="RahulPillalamarri_Resume.pdf" class="link-underline link-accent">here</a>.
+      </p>
+    </Reveal>
+
+    <div class="cv-embed">
+      <object
+        data="/RahulPillalamarri_Resume.pdf"
+        type="application/pdf"
+        class="cv-frame"
+        aria-label="Resume PDF"
+      >
+        <p>
+          Your browser can't display the PDF inline.
+          <a href="/RahulPillalamarri_Resume.pdf" class="link-underline link-accent">Download it here</a>.
+        </p>
+      </object>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cv {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+  }
+  @media (min-width: 640px) { .cv { padding-left: 2.5rem; padding-right: 2.5rem; } }
+
+  .accent-rule {
+    width: 4rem;
+    border: none;
+    border-top: 2px solid var(--accent);
+    margin: 2.5rem 0 1.5rem;
+  }
+  .intro {
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: none;
+    margin: 0 0 2.5rem;
+  }
+
+  .cv-embed {
+    width: 100%;
+    margin-top: 1rem;
+  }
+  .cv-frame {
+    width: 100%;
+    height: 90vh;
+    min-height: 600px;
+    border: 1px solid var(--divider);
+    background: var(--bg-elevated);
+    display: block;
+  }
+</style>

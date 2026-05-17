@@ -135,6 +135,10 @@ hr {
   opacity: 1;
   transform: translateY(0);
 }
+[data-reveal].no-transition,
+.reveal-text.no-transition .word > span {
+  transition: none;
+}
 
 /* Word-by-word reveal */
 .reveal-text { display: inline; }

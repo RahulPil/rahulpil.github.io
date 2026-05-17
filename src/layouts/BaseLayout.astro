@@ -78,7 +78,22 @@ const ogUrl = new URL(ogImage, Astro.site ?? SITE.url).toString();
     <Footer />
 
     <script>
-      function initReveal() {
+      function initReveal(immediate = false) {
+        // After a SPA navigation the view-transition already faded the new
+        // page in. If we then let in-viewport reveal elements run their own
+        // 900ms float-in, the two animations overlap and read as a glitchy
+        // double-animate. Snap those elements to .is-in without a transition;
+        // below-the-fold elements still animate normally on scroll.
+        if (immediate) {
+          const inViewEls = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-in), .reveal-text:not(.is-in)');
+          inViewEls.forEach((el) => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+              el.classList.add('no-transition');
+              el.classList.add('is-in');
+            }
+          });
+        }
         const els = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-in), .reveal-text:not(.is-in)');
         if (!('IntersectionObserver' in window)) {
           els.forEach((el) => el.classList.add('is-in'));
@@ -118,12 +133,12 @@ const ogUrl = new URL(ogImage, Astro.site ?? SITE.url).toString();
         });
       }
 
-      function init() {
-        initReveal();
+      function init(immediate = false) {
+        initReveal(immediate);
         initMagnetic();
       }
       init();
-      document.addEventListener('astro:after-swap', init);
+      document.addEventListener('astro:after-swap', () => init(true));
     </script>
   </body>
 </html>

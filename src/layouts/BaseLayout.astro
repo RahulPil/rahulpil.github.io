@@ -3,7 +3,6 @@ import { ClientRouter } from 'astro:transitions';
 import { SITE } from '~/config/site';
 import Header from '~/components/Header.astro';
 import Footer from '~/components/Footer.astro';
-import Cursor from '~/components/Cursor.astro';
 import '~/styles/global.css';
 
 interface Props {
@@ -50,17 +49,28 @@ const ogUrl = new URL(ogImage, Astro.site ?? SITE.url).toString();
     <script is:inline>
       (() => {
         try {
-          const stored = localStorage.getItem('theme');
-          const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          const theme = stored || sys;
-          document.documentElement.classList.toggle('dark', theme === 'dark');
+          const apply = () => {
+            const stored = localStorage.getItem('theme');
+            document.documentElement.classList.toggle('dark', stored === 'dark');
+          };
+          apply();
+          if (!window.__themeBound) {
+            // Copy the current theme class onto the incoming page BEFORE paint
+            // so a SPA navigation doesn't flash to the new page's default class.
+            document.addEventListener('astro:before-swap', (ev) => {
+              const dark = document.documentElement.classList.contains('dark');
+              ev.newDocument.documentElement.classList.toggle('dark', dark);
+            });
+            // After swap, re-read localStorage in case the toggle ran on another tab.
+            document.addEventListener('astro:after-swap', apply);
+            window.__themeBound = true;
+          }
         } catch (e) { /* ignore */ }
       })();
     </script>
     <ClientRouter />
   </head>
   <body>
-    <Cursor />
     <Header />
     <main id="main" class="min-h-[60vh]">
       <slot />

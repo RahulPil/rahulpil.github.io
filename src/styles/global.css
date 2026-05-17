@@ -155,58 +155,6 @@ hr {
   transform: translateY(0%);
 }
 
-/* Custom cursor */
-@media (hover: hover) and (pointer: fine) {
-  html.has-cursor,
-  html.has-cursor body { cursor: none; }
-  html.has-cursor a,
-  html.has-cursor button,
-  html.has-cursor [role="button"],
-  html.has-cursor [data-cursor] { cursor: none; }
-}
-
-.cursor-dot,
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate3d(-100px, -100px, 0);
-  will-change: transform;
-}
-.cursor-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--ink);
-  transition: opacity 250ms, transform 60ms linear, background-color 300ms;
-}
-.cursor-ring {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--ink);
-  margin-left: -15px;
-  margin-top: -15px;
-  transition: opacity 250ms, transform 350ms cubic-bezier(0.16, 1, 0.3, 1), width 350ms, height 350ms, margin 350ms, border-color 300ms, background-color 300ms;
-}
-html.cursor-hover .cursor-ring {
-  width: 64px;
-  height: 64px;
-  margin-left: -29px;
-  margin-top: -29px;
-  background: var(--accent-soft);
-  border-color: var(--accent);
-}
-html.cursor-hover .cursor-dot {
-  background: var(--accent);
-}
-html.cursor-hidden .cursor-dot,
-html.cursor-hidden .cursor-ring {
-  opacity: 0;
-}
-
 /* Magnetic link container */
 [data-magnetic] {
   display: inline-block;
@@ -348,5 +296,50 @@ html.cursor-hidden .cursor-ring {
   }
   [data-reveal] { opacity: 1 !important; transform: none !important; }
   .reveal-text .word > span { transform: none !important; }
-  .cursor-dot, .cursor-ring { display: none !important; }
 }
+
+/* Display + layout classes used on wrapper components (Reveal, MagneticLink).
+   Must be global to escape Astro's per-file style scoping. */
+.display-xl {
+  font-family: var(--font-display);
+  font-weight: 380;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-size: 4rem !important;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  margin: 0;
+}
+.pillalamarri {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: clamp(2px, 0.5vw, 6px);
+  text-underline-offset: 0.05em;
+  text-decoration-skip-ink: none;
+}
+.section-header { margin-bottom: 2.5rem; }
+.about-body {
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  line-height: 1.7;
+  max-width: 48ch;
+  color: var(--text);
+}
+.about-body p + p { margin-top: 1.25rem; }
+.recent-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  margin-top: 3rem;
+}
+.cta-link {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--ink);
+  border-bottom: 1px solid var(--divider);
+  padding-bottom: 0.25rem;
+  transition: color 250ms, border-color 250ms;
+}
+.cta-link:hover { color: var(--accent); border-color: var(--accent); }
+
+.about-body--wide { max-width: none; }

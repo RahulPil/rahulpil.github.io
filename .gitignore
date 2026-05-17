@@ -26,3 +26,7 @@ pnpm-debug.log*
 
 # misc
 .cache/
+
+# personal artifacts (not committed)
+New_Resume.pdf
+/profile.jpeg

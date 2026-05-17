@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro';
-import PageHeader from '~/components/PageHeader.astro';
 import Reveal from '~/components/Reveal.astro';
 import { getCollection } from 'astro:content';
 import { byDateDesc, isoMonth } from '~/lib/format';
@@ -15,15 +14,11 @@ const byTopic = notes.reduce<Record<string, typeof notes>>((acc, n) => {
 const topics = Object.keys(byTopic).sort((a, b) => a.localeCompare(b));
 ---
 <BaseLayout title="Notes" description="Notes on machine learning, organized by topic.">
-  <PageHeader
-    eyebrow="Index · notes"
-    title="Notes."
-    intro="A slow notebook on machine learning. Half-derivations, intuition pumps, reading summaries — written for me six months from now."
-    count={notes.length}
-    countLabel={notes.length === 1 ? 'note' : 'notes'}
-  />
-
   <section class="notes">
+    <Reveal>
+      <hr class="accent-rule" />
+      <p class="intro text-pretty">A slow notebook on machine learning. Half-derivations, intuition pumps, reading summaries — written for me six months from now.</p>
+    </Reveal>
     {topics.map((topic, ti) => (
       <Reveal class="topic-block" delay={ti * 80}>
         <header class="topic-head">
@@ -59,6 +54,20 @@ const topics = Object.keys(byTopic).sort((a, b) => a.localeCompare(b));
     padding: 0 1.5rem 6rem;
   }
   @media (min-width: 640px) { .notes { padding-left: 2.5rem; padding-right: 2.5rem; } }
+
+  .accent-rule {
+    width: 4rem;
+    border: none;
+    border-top: 2px solid var(--accent);
+    margin: 2.5rem 0 1.5rem;
+  }
+  .intro {
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: none;
+    margin: 0 0 2.5rem;
+  }
 
   .topic-block { margin-bottom: 4rem; }
 

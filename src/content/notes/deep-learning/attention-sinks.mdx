@@ -1,62 +1,24 @@
 ---
-title: "A note on attention sinks"
-summary: "Why softmax attention concentrates on a few 'sink' tokens, and what it tells us about streaming inference."
-topic: "Deep Learning"
-date: 2026-04-28
-tags: ["transformers", "attention", "inference"]
+title: "Attention sinks"
+summary: "Why a few early tokens end up absorbing most of the attention mass, and why that's a feature, not a bug."
+topic: "deep-learning"
+date: 2026-05-12
+tags: ["transformers", "attention"]
+draft: false
 ---
 
-In late 2023, [Xiao et al.](https://arxiv.org/abs/2309.17453) noticed something strange about
-autoregressive transformers: when generating long sequences, the model devotes a
-disproportionate share of attention to the **first few tokens** — even when those tokens
-carry no semantic content. They called these *attention sinks*.
+A recurring observation in trained transformers: a small number of tokens —
+often the very first ones in the sequence — end up receiving a
+disproportionate fraction of the attention mass across many heads and layers,
+even when those tokens carry essentially no semantic content.
 
-Once you see it, it is hard to unsee. Plot the attention weights of a trained GPT-style
-model across layers and heads, and the first column is usually bright.
+The intuitive story I find useful: softmax forces every head to put its
+probability mass *somewhere*. When a head has nothing in particular to attend
+to on a given step, it dumps the mass onto a fixed "parking spot" rather than
+smearing it across the sequence (which would inject noise). Early tokens get
+the job because they're visible from every position under causal masking.
 
-## Why it happens
-
-Softmax attention has a useful, annoying property: it must sum to one. For a query $q$ and
-keys $k_1, \dots, k_n$, the attention weights are
-
-$$
-\alpha_i = \frac{\exp(q^\top k_i / \sqrt{d})}{\sum_j \exp(q^\top k_j / \sqrt{d})}.
-$$
-
-There is no option for "none of the above." If a head has nothing it wants to attend to —
-say, a layer late in the network where the residual stream is already sufficient — it must
-still place its mass *somewhere*. The first token is a convenient dumping ground: it is
-always there, and the model can learn to give it a $k$ that is loud and content-free.
-
-## Why it matters
-
-This is not just a curiosity. **Window attention** schemes — used to extend context length
-cheaply — evict early tokens once the window slides forward. If those early tokens were
-silently absorbing the leftover attention mass, evicting them destabilizes the softmax
-distribution and the model degrades. The fix proposed by StreamingLLM is delightful in its
-plainness: keep the first $k$ tokens around as permanent residents, and slide the window
-over everything else.
-
-## What I'm still confused about
-
-- Are attention sinks *necessary* in some information-theoretic sense, or merely an
-  artifact of softmax + Adam + the initialization we happen to use?
-- The cleanest fix would be a learnable "null token" with a fixed key — has this been
-  tried at scale?
-- The connection to *register tokens* in vision transformers
-  ([Darcet et al. 2023](https://arxiv.org/abs/2309.16588)) feels like the same phenomenon
-  by a different name. Is it?
-
-```python
-# A toy way to inspect this on a small model:
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-tok = AutoTokenizer.from_pretrained("gpt2")
-mdl = AutoModelForCausalLM.from_pretrained("gpt2", output_attentions=True)
-
-ids = tok("the quick brown fox", return_tensors="pt").input_ids
-out = mdl(ids)
-# out.attentions: tuple of (B, H, T, T) tensors per layer
-# Look at out.attentions[-1][0].mean(0)[:, 0] — the first column.
-```
+The practical consequence is the bit that surprised me: removing these tokens
+during inference — say, by truncating long contexts naively — can degrade
+quality much more than the tokens' content would suggest. They're load-bearing
+*as positions*, not as words.

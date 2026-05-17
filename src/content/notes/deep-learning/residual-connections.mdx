@@ -1,58 +1,24 @@
 ---
-title: "Why residual connections help"
-summary: "A short, geometric argument for why $y = x + f(x)$ lets gradients reach early layers."
-topic: "Deep Learning"
-date: 2026-03-15
-tags: ["optimization", "architecture", "resnet"]
+title: "Residual connections as a default state"
+summary: "Thinking about residual streams as 'the network does nothing unless a layer has something to add' — and why that framing keeps paying off."
+topic: "deep-learning"
+date: 2026-03-28
+tags: ["architecture", "residuals"]
+draft: false
 ---
 
-The residual block from [He et al. 2015](https://arxiv.org/abs/1512.03385) is the deceptively
-simple
+A reframing I keep returning to: a residual block computes $x \mapsto x + f(x)$,
+which means the *default* behavior of every layer is to leave the
+representation alone. A layer only contributes when $f(x)$ is meaningfully
+non-zero. Training, in this view, is largely about deciding which layers
+should bother to do anything at a given depth.
 
-$$
-y = x + f(x).
-$$
+This frames a lot of small empirical observations cleanly: many layers in a
+trained transformer have near-identity behavior on many inputs; pruning some
+of them barely moves the loss; the "residual stream" picture in mechanistic
+interpretability work treats each layer as writing a small additive update
+into a shared workspace. All of these are the same idea seen from different
+angles.
 
-Stack a thousand of them and the network still trains. Stack a thousand of $y = f(x)$ and it
-does not. The standard textbook story is "gradients flow through the identity," which is
-true but glosses over *why* the identity is special.
-
-## Gradient view
-
-Let $L$ be the loss and consider a deep stack $x_{l+1} = x_l + f_l(x_l)$. By the chain rule,
-
-$$
-\frac{\partial L}{\partial x_l} = \frac{\partial L}{\partial x_{L}} \cdot \prod_{i=l}^{L-1} \left( I + \frac{\partial f_i(x_i)}{\partial x_i} \right).
-$$
-
-The product is not over Jacobians of $f$; it is over $I + \nabla f$. As long as $\nabla f$
-stays small near initialization (which weight init schemes ensure), the product stays close
-to the identity and gradient magnitudes are preserved.
-
-Without the residual,
-
-$$
-\frac{\partial L}{\partial x_l} = \frac{\partial L}{\partial x_{L}} \cdot \prod_{i=l}^{L-1} \frac{\partial f_i(x_i)}{\partial x_i},
-$$
-
-and any consistent skew in the spectrum of $\nabla f$ — even slightly less than 1 on
-average — compounds into vanishing gradients.
-
-## Loss landscape view
-
-[Li et al. 2018](https://arxiv.org/abs/1712.09913) visualized loss surfaces of deep networks
-with and without skip connections. Without: a jagged terrain pocked with sharp minima.
-With: a smooth, convex-ish basin. The residual connections are essentially a *prior toward
-identity* — they make "do nothing" the network's default behavior, and each layer only has
-to learn what to add on top.
-
-## A useful intuition
-
-A residual network is a **shallow ensemble in disguise**.
-[Veit et al. 2016](https://arxiv.org/abs/1605.06431) showed that the effective paths through
-a ResNet are not the full depth — they form a distribution over path lengths, peaked at a
-much shorter depth than the architecture suggests. The model behaves more like an ensemble
-of moderately deep networks than one very deep one.
-
-Which is to say: residual connections didn't make deep networks work. They made
-*moderately-deep ensembles* work, and we labeled the result depth.
+The reason I like the framing is that it makes the surprising thing about deep
+networks not their depth but their *selective use* of depth.

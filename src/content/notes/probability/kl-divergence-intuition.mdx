@@ -1,54 +1,27 @@
 ---
-title: "KL divergence, intuition pump"
-summary: "KL as expected excess code length, and why the direction matters."
-topic: "Probability & Statistics"
-date: 2026-01-22
-tags: ["information theory", "kl divergence"]
+title: "KL divergence, three ways to read it"
+summary: "Three short interpretations of $D_{\\mathrm{KL}}(p \\,\\|\\, q)$ that I find more useful than the definition."
+topic: "probability"
+date: 2026-04-04
+tags: ["information-theory", "kl"]
+draft: false
 ---
 
-The Kullback–Leibler divergence between two distributions $P$ and $Q$ over the same support
-is
+The definition $D_{\mathrm{KL}}(p \,\|\, q) = \sum_x p(x) \log \frac{p(x)}{q(x)}$
+is correct but rarely the thing that helps me think. Three readings I keep
+reaching for instead:
 
-$$
-D_{\mathrm{KL}}(P \,\|\, Q) = \mathbb{E}_{x \sim P}\!\left[\log \frac{P(x)}{Q(x)}\right].
-$$
+**As a coding penalty.** It's the expected number of extra nats you pay if you
+encode samples from $p$ using a code optimized for $q$. The asymmetry stops
+feeling weird once you remember the code is built for the wrong distribution,
+not the wrong samples.
 
-The compact definition hides a useful story.
+**As a likelihood ratio in expectation.** $D_{\mathrm{KL}}(p \,\|\, q) = \mathbb{E}_p[\log p - \log q]$
+is the average log-likelihood gap between the true model and the candidate, evaluated under
+the true data — which is why minimizing KL to data is equivalent to maximum
+likelihood, up to a constant.
 
-## Excess code length
-
-Suppose you're designing a prefix code for samples from $P$, but you don't know $P$ — you
-*think* the distribution is $Q$. By Shannon's source coding theorem, your codewords will
-be roughly $-\log_2 Q(x)$ bits long. The optimal code, had you known $P$, would have used
-$-\log_2 P(x)$ bits.
-
-The expected *excess* per symbol is
-
-$$
-\mathbb{E}_{x \sim P}\!\left[-\log Q(x) + \log P(x)\right] = D_{\mathrm{KL}}(P \,\|\, Q).
-$$
-
-KL divergence is the **regret** of using the wrong model, measured in bits.
-
-This already explains a lot:
-
-- $D_{\mathrm{KL}}(P \,\|\, P) = 0$: no regret if you knew the truth.
-- $D_{\mathrm{KL}} \ge 0$: you can never *gain* from using the wrong code.
-- $D_{\mathrm{KL}}(P \,\|\, Q) = \infty$ if $Q(x) = 0$ where $P(x) > 0$: an event is
-  cheap-to-encode by your model that the truth says actually happens — catastrophic.
-
-## Why the direction matters
-
-KL is not symmetric. The two directions answer different questions.
-
-**Forward KL** $D_{\mathrm{KL}}(P \,\|\, Q)$ asks: "Where $P$ has mass, does $Q$?"
-Minimizing it pushes $Q$ to cover all of $P$ — it is *mass-covering*, and tends to produce
-broad, hedged $Q$'s. This is what maximum likelihood does.
-
-**Reverse KL** $D_{\mathrm{KL}}(Q \,\|\, P)$ asks: "Where $Q$ has mass, does $P$?"
-Minimizing it lets $Q$ concentrate on a single mode of $P$ and ignore the rest — it is
-*mode-seeking*. This is what variational inference (ELBO) does, and why VAEs sometimes
-produce sharp samples from a single mode rather than the full distribution.
-
-The choice of direction is a choice of failure mode: would you rather hedge
-indiscriminately, or commit to a wrong answer with confidence?
+**As a local quadratic.** Near $p = q$, the KL is approximately $\tfrac{1}{2}$
+times a Mahalanobis distance under the Fisher information metric. That's the
+fact that makes natural gradients natural, and it's the bridge between the
+information-geometric and optimization views of the same object.

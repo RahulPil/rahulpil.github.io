@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro';
-import PageHeader from '~/components/PageHeader.astro';
 import Reveal from '~/components/Reveal.astro';
 import { getCollection } from 'astro:content';
 import { byDateDesc, formatDate } from '~/lib/format';
@@ -9,15 +8,11 @@ import readingTime from 'reading-time';
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(byDateDesc);
 ---
 <BaseLayout title="Writing" description="Essays and longer-form posts.">
-  <PageHeader
-    eyebrow="Index · writing"
-    title="Writing."
-    intro="Longer-form essays. Reading notes, opinions, occasional retrospectives — published before they're finished."
-    count={posts.length}
-    countLabel={posts.length === 1 ? 'post' : 'posts'}
-  />
-
   <section class="writing">
+    <Reveal>
+      <hr class="accent-rule" />
+      <p class="intro text-pretty">Longer-form essays. Reading notes, opinions, occasional retrospectives — published before they're finished.</p>
+    </Reveal>
     <ul class="post-list">
       {posts.map((p, i) => {
         const mins = Math.max(1, Math.round(readingTime(p.body || '').minutes));
@@ -55,6 +50,20 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(byDa
     padding: 0 1.5rem 6rem;
   }
   @media (min-width: 640px) { .writing { padding-left: 2.5rem; padding-right: 2.5rem; } }
+
+  .accent-rule {
+    width: 4rem;
+    border: none;
+    border-top: 2px solid var(--accent);
+    margin: 2.5rem 0 1.5rem;
+  }
+  .intro {
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: none;
+    margin: 0 0 2.5rem;
+  }
 
   .post-list { list-style: none; padding: 0; margin: 0; }
 

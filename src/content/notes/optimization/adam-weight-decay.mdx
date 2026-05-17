@@ -1,54 +1,24 @@
 ---
-title: "Adam and decoupled weight decay"
-summary: "Why AdamW is not Adam + $L_2$, and why the difference is more than cosmetic."
-topic: "Optimization"
-date: 2026-02-19
-tags: ["adam", "regularization", "optimization"]
+title: "Adam vs. AdamW, in one paragraph"
+summary: "The decoupled-weight-decay distinction, stated as plainly as I can manage."
+topic: "optimization"
+date: 2026-05-06
+tags: ["optimizers", "regularization"]
+draft: false
 ---
 
-For years, "weight decay" and "$L_2$ regularization" were used interchangeably. With SGD
-that's defensible — they produce the same update:
+Plain Adam with an L2 penalty added to the loss does *not* do what you think
+it does. The penalty gets folded into the gradient before Adam's per-parameter
+adaptive rescaling, which means parameters with large second-moment estimates
+get a smaller effective weight decay than parameters with small ones. The
+shrinkage is no longer uniform — it depends on the optimizer's running
+statistics, which is exactly the thing you didn't want regularization to
+depend on.
 
-$$
-\theta_{t+1} = \theta_t - \eta \nabla L(\theta_t) - \eta \lambda \theta_t.
-$$
-
-The $L_2$ penalty $\tfrac{\lambda}{2}\|\theta\|^2$ contributes $\lambda \theta_t$ to the
-gradient; the update from that contribution is $-\eta \lambda \theta_t$. Same thing.
-
-With Adam, they are **not** the same thing.
-
-## Where the equivalence breaks
-
-Adam normalizes the gradient by a running estimate of its second moment. If you add
-$\lambda \theta_t$ to the gradient as $L_2$ regularization, that *also* gets normalized.
-Parameters that are already large — exactly the ones you want to decay — have large gradient
-magnitudes, end up with large $v$, and get *less* effective decay than smaller parameters.
-
-$L_2$-as-gradient-perturbation under Adam decays the *normalized* parameter, not the
-parameter itself.
-
-## The AdamW fix
-
-[Loshchilov and Hutter (2017)](https://arxiv.org/abs/1711.05101) proposed *decoupled* weight
-decay: apply the decay term outside the adaptive update.
-
-$$
-\theta_{t+1} = \theta_t - \eta \cdot \mathrm{Adam}(\nabla L, \theta_t) - \eta \lambda \theta_t.
-$$
-
-Now the decay does what it says on the tin — every parameter shrinks toward zero at the
-same rate, regardless of its gradient history.
-
-The empirical result was striking: a hyperparameter people had been tuning, somewhat
-hopelessly, for years suddenly worked much better and was easier to set. The "Adam
-generalizes worse than SGD" folklore softened considerably.
-
-## A small caution
-
-Decoupled decay is no longer "regularization" in the strict variational sense — there is no
-prior on $\theta$ that this corresponds to under the usual Adam update. It is closer to a
-*scheduled shrinkage*. Whether that distinction matters for your particular setup depends
-on whether you care about the Bayesian story or the bottom-line validation loss.
-
-I usually care about the validation loss.
+AdamW fixes this by applying the decay $\theta \leftarrow \theta - \eta \lambda \theta$
+*after* the adaptive update, decoupled from the gradient path entirely. The
+result is the simple thing you wanted in the first place: every parameter
+shrinks toward zero at the same rate, regardless of how Adam happens to be
+rescaling its gradient. Most modern training recipes that say "Adam" really
+mean AdamW, and the distinction shows up most visibly with long training runs
+and large models.

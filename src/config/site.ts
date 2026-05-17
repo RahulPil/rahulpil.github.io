@@ -8,12 +8,11 @@ export const SITE = {
     'Projects, notes, and writing on machine learning — by Rahul Pillalamarri.',
   url: 'https://rahulpil.github.io',
   social: {
-    github: 'https://github.com/rahulpil',
+    github: 'https://github.com/RahulPil',
     linkedin: 'https://www.linkedin.com/in/rahul-pillalamarri',
     twitter: '',
   },
   nav: [
-    { href: '/projects', label: 'projects' },
     { href: '/notes', label: 'notes' },
     { href: '/blog', label: 'writing' },
     { href: '/experience', label: 'about' },

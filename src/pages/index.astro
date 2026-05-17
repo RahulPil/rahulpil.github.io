@@ -302,7 +302,7 @@ const allItems: Item[] = [
   @media (max-width: 640px) {
     /* Hero typography: relax tracking on tiny screens so PILLALAMARRI doesn't pinch */
     .hero :global(.display-xl) {
-      font-size: clamp(1.25rem, 8vw, 2.25rem);
+      font-size: clamp(1rem, 6.5vw, 1.875rem);
       letter-spacing: -0.02em;
       overflow-wrap: normal;
     }
@@ -310,22 +310,22 @@ const allItems: Item[] = [
 
     /* Hero photo: center under the hero text instead of hugging the right edge */
     .hero-right {
-      justify-content: center;
+      display: block;
       margin-top: 0.5rem;
     }
     .photo {
-      margin: 0;
-      width: min(60vw, 14rem);
+      margin: 0 auto;
+      width: min(50vw, 11rem);
     }
 
     /* Tighten horizontal padding to a balanced 1.25rem on the smallest phones,
        and compress vertical rhythm slightly */
-    .hero { padding: 1.25rem 1.25rem 1.75rem; }
+    .hero { padding: clamp(1rem, 4vh, 2.5rem) 1.25rem clamp(1.25rem, 4vh, 2.5rem); }
     .section { padding: 1.75rem 1.25rem; }
-    .hero-grid { gap: 2rem; }
+    .hero-grid { gap: 1.25rem; }
 
     /* Lead and body copy: tighten font size and ensure no horizontal overflow */
-    .lead { font-size: 1rem; line-height: 1.6; margin-top: 1.25rem; }
+    .lead { font-size: 0.9375rem; line-height: 1.55; margin-top: 1.25rem; }
     .section-subtitle { font-size: 1rem; line-height: 1.55; margin-bottom: 1.75rem; }
 
     /* Section header breathing room */

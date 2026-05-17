@@ -300,22 +300,52 @@ const allItems: Item[] = [
 
   /* ---------- Mobile overrides (≤ 640px) ---------- */
   @media (max-width: 640px) {
-    /* Hero typography: relax tracking on tiny screens so PILLALAMARRI doesn't pinch */
+    /* Belt-and-suspenders: clip anything that bleeds past the hero box */
+    .hero { overflow-x: hidden; }
+    /* Grid items must be allowed to shrink past their content's intrinsic size,
+       otherwise a wide child (e.g. the nowrap PILLALAMARRI) will expand the track */
+    .hero-grid > * { min-width: 0; }
+    .hero-left { max-width: 100%; min-width: 0; }
+
+    /* Hero typography: shrink so PILLALAMARRI (nowrap, 13 chars) fits a 360-402px viewport.
+       !important is required because global.css sets `.display-xl { font-size: 4rem !important }`,
+       which would otherwise win the cascade despite our higher-specificity selector. */
     .hero :global(.display-xl) {
-      font-size: clamp(1rem, 6.5vw, 1.875rem);
+      font-size: clamp(0.9rem, 6vw, 1.625rem) !important;
       letter-spacing: -0.02em;
       overflow-wrap: normal;
     }
     .hero :global(.pillalamarri) { white-space: nowrap; }
 
-    /* Hero photo: center under the hero text instead of hugging the right edge */
+    /* Hero photo: center under the hero text instead of hugging the right edge.
+       Belt-and-suspenders: 3 centering layers (flex on .hero-right, flex on the
+       Reveal wrapper, margin:auto on .photo) so the photo lands centered even if
+       one layer fails. */
     .hero-right {
-      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 100%;
       margin-top: 0.5rem;
+    }
+    .hero-right :global([data-reveal]) {
+      margin: 0 auto;
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      justify-content: center;
     }
     .photo {
       margin: 0 auto;
+      display: block;
       width: min(50vw, 11rem);
+      max-width: 100%;
+    }
+    .photo img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     /* Tighten horizontal padding to a balanced 1.25rem on the smallest phones,

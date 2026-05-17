@@ -298,4 +298,53 @@ const allItems: Item[] = [
     .about-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 4rem; align-items: center; }
   }
 
+  /* ---------- Mobile overrides (≤ 640px) ---------- */
+  @media (max-width: 640px) {
+    /* Hero typography: relax tracking on tiny screens so PILLALAMARRI doesn't pinch */
+    .hero :global(.display-xl) {
+      letter-spacing: -0.02em;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    /* Hero photo: center under the hero text instead of hugging the right edge */
+    .hero-right {
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+    .photo {
+      margin: 0;
+      width: min(60vw, 14rem);
+    }
+
+    /* Tighten horizontal padding to a balanced 1.25rem on the smallest phones,
+       and compress vertical rhythm slightly */
+    .hero { padding: 1.25rem 1.25rem 1.75rem; }
+    .section { padding: 1.75rem 1.25rem; }
+    .hero-grid { gap: 2rem; }
+
+    /* Lead and body copy: tighten font size and ensure no horizontal overflow */
+    .lead { font-size: 1rem; line-height: 1.6; margin-top: 1.25rem; }
+    .section-subtitle { font-size: 1rem; line-height: 1.55; margin-bottom: 1.75rem; }
+
+    /* Section header breathing room */
+    .section-divider { margin-bottom: 1rem; }
+    .display-md { font-size: clamp(1.75rem, 8vw, 2.25rem); }
+  }
+
+  /* ---------- Posts list mobile polish (≤ 700px) ---------- */
+  @media (max-width: 700px) {
+    .recent-row {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      padding: 1rem 0.25rem;
+    }
+    .recent-title {
+      font-size: 1.05rem;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      min-width: 0;
+    }
+    .recent-row:hover { padding-left: 0.25rem; }
+    .recent-cta { display: flex; flex-wrap: wrap; gap: 1rem; }
+  }
 </style>

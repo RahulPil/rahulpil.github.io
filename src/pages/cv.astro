@@ -27,6 +27,16 @@ import Reveal from '~/components/Reveal.astro';
         </p>
       </object>
     </div>
+
+    <a
+      href="/RahulPillalamarri_Resume.pdf"
+      download="RahulPillalamarri_Resume.pdf"
+      class="cv-mobile-download"
+    >
+      <span class="cv-mobile-label font-mono">Resume · PDF</span>
+      <span class="cv-mobile-cta">Download my résumé</span>
+      <span class="cv-mobile-hint">Inline preview isn't ideal on phones — open the PDF instead.</span>
+    </a>
   </section>
 </BaseLayout>
 
@@ -58,10 +68,55 @@ import Reveal from '~/components/Reveal.astro';
   }
   .cv-frame {
     width: 100%;
-    height: 90vh;
-    min-height: 600px;
+    height: clamp(500px, 85vh, 900px);
     border: 1px solid var(--divider);
     background: var(--bg-elevated);
     display: block;
+  }
+
+  .cv-mobile-download { display: none; }
+
+  @media (max-width: 640px) {
+    .cv { padding-bottom: 4rem; }
+    .accent-rule { margin: 1.75rem 0 1.25rem; }
+    .intro { margin-bottom: 1.75rem; }
+    .cv-embed { display: none; }
+    .cv-mobile-download {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      padding: 1.5rem 1.25rem;
+      margin-top: 0.5rem;
+      border: 1px solid var(--divider);
+      border-left: 3px solid var(--accent);
+      background: var(--bg-elevated);
+      color: var(--ink);
+      text-decoration: none;
+      transition: background 200ms, border-color 200ms;
+      min-height: 44px;
+    }
+    .cv-mobile-download:active { background: color-mix(in srgb, var(--accent) 8%, var(--bg-elevated)); }
+    .cv-mobile-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .cv-mobile-cta {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+    .cv-mobile-cta::after {
+      content: " ↓";
+      color: var(--accent);
+    }
+    .cv-mobile-hint {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
   }
 </style>

@@ -7,7 +7,7 @@ const isActive = (href: string) =>
   href === '/' ? path === '/' : path.startsWith(href);
 ---
 <header class="site-header sticky top-0 z-50">
-  <div class="mx-auto flex max-w-[78rem] items-center justify-between gap-4 px-6 py-5 sm:px-10">
+  <div class="mx-auto flex max-w-[78rem] items-center justify-between gap-2 px-4 py-5 sm:gap-4 sm:px-10">
     <a href="/" class="logo group" data-cursor aria-label={SITE.name}>
       <span class="font-display text-xl tracking-tight">{SITE.shortName}<span class="logo-dot">.</span></span>
     </a>
@@ -65,6 +65,19 @@ const isActive = (href: string) =>
   .nav-link.is-active::after { transform: scaleX(1); }
   .nav-link.is-active { color: var(--accent); }
   .nav-sep { color: var(--faint); }
+
+  @media (max-width: 640px) {
+    .nav-link {
+      padding: 0.25rem 0.35rem;
+    }
+    .nav-link::after {
+      left: 0.35rem;
+      right: 0.35rem;
+    }
+    .nav-sep {
+      display: none;
+    }
+  }
 </style>
 
 <script>

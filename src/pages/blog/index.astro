@@ -89,7 +89,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(byDa
     margin: 0;
   }
   .post-summary { color: var(--muted); line-height: 1.55; max-width: 60ch; }
-  .post-meta { display: flex; gap: 0.6rem; align-items: center; font-size: 0.75rem; color: var(--faint); }
+  .post-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 0.6rem; align-items: center; font-size: 0.75rem; color: var(--faint); }
   .post-meta .dot { color: var(--faint); }
   .post-meta .lower { text-transform: lowercase; }
 
@@ -109,6 +109,25 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(byDa
     .post-date { grid-row: 1; grid-column: 1; padding-top: 0; }
     .post-content { grid-row: 2; grid-column: 1 / -1; }
     .post-arrow { grid-row: 1; grid-column: 2; padding-top: 0; }
+  }
+
+  @media (max-width: 640px) {
+    .writing { padding-bottom: 4rem; }
+    .accent-rule { margin: 1.75rem 0 1.25rem; }
+    .intro { margin-bottom: 1.75rem; font-size: 1rem; line-height: 1.6; }
+    .post-row {
+      gap: 0.5rem 1rem;
+      padding: 1.5rem 0;
+    }
+    .post-row:hover { padding-left: 0; }
+    .post-date {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+    }
+    .post-content { gap: 0.4rem; }
+    .post-title { font-size: 1.3rem; }
+    .post-summary { font-size: 0.9rem; line-height: 1.5; }
+    .post-arrow { font-size: 1.1rem; }
   }
 
   .empty { color: var(--muted); font-style: italic; }

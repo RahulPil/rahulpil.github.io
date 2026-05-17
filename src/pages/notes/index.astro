@@ -134,5 +134,41 @@ const topics = Object.keys(byTopic).sort((a, b) => a.localeCompare(b));
     .note-arrow { grid-row: 1; grid-column: 2; justify-self: end; }
   }
 
+  @media (max-width: 640px) {
+    .notes { padding-bottom: 4rem; }
+    .accent-rule { margin: 1.75rem 0 1.25rem; }
+    .intro { margin-bottom: 1.75rem; font-size: 1rem; line-height: 1.6; }
+    .topic-block { margin-bottom: 2.5rem; }
+    .topic-head {
+      gap: 1rem;
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
+    .note-row {
+      grid-template-columns: 1fr auto;
+      gap: 0.35rem 0.75rem;
+      padding: 1rem 0;
+    }
+    .note-row:hover { padding-left: 0; }
+    .note-date {
+      grid-row: 1;
+      grid-column: 1;
+      padding-top: 0;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+    }
+    .note-content {
+      grid-row: 2;
+      grid-column: 1 / -1;
+    }
+    .note-arrow {
+      grid-row: 1;
+      grid-column: 2;
+      align-self: center;
+    }
+    .note-title { font-size: 1.1rem; }
+    .note-summary { font-size: 0.85rem; }
+  }
+
   .empty { color: var(--muted); font-style: italic; }
 </style>

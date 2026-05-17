@@ -69,9 +69,9 @@ const skills: Record<string, string[]> = {
 ---
 <BaseLayout title="Experience" description="Education, research, and work.">
   <section class="cv">
-    <hr class="accent-rule" />
-    <Reveal class="cv-intro" delay={100}>
-      <p class="cv-bio">
+    <Reveal delay={100}>
+      <hr class="accent-rule" />
+      <p class="intro text-pretty">
         I'm a master's student in computer science at Texas A&amp;M, in the Deep Learning
         Fundamentals Lab under Dr. Tomer Galanti. I'm also a software engineer at Boeing
         on the MQ-25 program. Before grad school I studied at the University of Washington.
@@ -156,15 +156,18 @@ const skills: Record<string, string[]> = {
   }
   @media (min-width: 640px) { .cv { padding-left: 2.5rem; padding-right: 2.5rem; } }
 
-  .cv-intro {
-    max-width: 64ch;
-    margin-bottom: 4rem;
+  .accent-rule {
+    width: 4rem;
+    border: none;
+    border-top: 2px solid var(--accent);
+    margin: 2.5rem 0 1.5rem;
   }
-  .cv-bio {
-    font-size: clamp(1.05rem, 1.5vw, 1.15rem);
-    line-height: 1.7;
-    color: var(--text);
-    margin-bottom: 1.5rem;
+  .intro {
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: none;
+    margin: 0 0 2.5rem;
   }
 
   .cv-grid {

@@ -11,7 +11,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(byDa
   <section class="writing">
     <Reveal>
       <hr class="accent-rule" />
-      <p class="intro text-pretty">Longer-form essays. Reading notes, opinions, occasional retrospectives — published before they're finished.</p>
+      <p class="intro text-pretty">Longer posts about projects I've built, experiments I've run, and topics I wanted to explore more deeply.</p>
     </Reveal>
     <ul class="post-list">
       {posts.map((p, i) => {

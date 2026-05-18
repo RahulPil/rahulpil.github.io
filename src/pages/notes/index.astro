@@ -17,7 +17,7 @@ const topics = Object.keys(byTopic).sort((a, b) => a.localeCompare(b));
   <section class="notes">
     <Reveal>
       <hr class="accent-rule" />
-      <p class="intro text-pretty">A slow notebook on machine learning. Half-derivations, intuition pumps, reading summaries — written for me six months from now.</p>
+      <p class="intro text-pretty">Rough notes on things I'm learning, revisiting, or trying to understand better.</p>
     </Reveal>
     {topics.map((topic, ti) => (
       <Reveal class="topic-block" delay={ti * 80}>
